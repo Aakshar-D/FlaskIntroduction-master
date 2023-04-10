@@ -1,13 +1,8 @@
 import pandas as pd
-import polars as pl
-import pyarrow
 import numpy as np
 from simple_salesforce import Salesforce
 import openpyxl
-import statistics
 from datetime import datetime
-from statistics import mode
-from pickle import TRUE
 from simple_salesforce import Salesforce
 from simple_salesforce import SalesforceLogin
 from simple_salesforce import SFBulkHandler
