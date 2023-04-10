@@ -1,28 +1,28 @@
 <!doctype html>
 <html>
   <head>
-    <title>File Upload and Salesforce Query Example</title>
+    <title>Webforce Data loader</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='static\css\main.css') }}">
   </head>
   <body>
-    <h1>File Upload and Salesforce Query Example</h1>
-
-    <h2>Salesforce Query Result:</h2>
-    <p>{{ Result }}</p>
-
+    <h1>Webforce Data loader</h1>
     {% if table %}
     <h2>Uploaded File Table:</h2>
     {{ table|safe }}
     {% endif %}
-
     <h2>Upload a File:</h2>
     <form method="post" enctype="multipart/form-data" action="{{ url_for('upload') }}">
       <input type="file" name="file">
       <input type="submit" value="Upload">
     </form>
-
-    <h2>Query Salesforce:</h2>
-    <form method="post" action="{{ url_for('query_salesforce') }}">
-      <input type="submit" value="Query Salesforce">
+    <h1>Insert</h1>
+    <form  method="POST" action="{{ url_for('Insert_file') }}">
+        <button type="submit" class="btn btn-primary">Download Output CSV File</button>
+    </form>
+    <h1>Update</h1>
+    <form method="POST" action="{{ url_for('Update_file') }}" >
+        <button type="submit" class="btn btn-primary">Download Output CSV File</button>
+    </form>
     </form>
   </body>
 </html>
