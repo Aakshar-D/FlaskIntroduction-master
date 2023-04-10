@@ -1,0 +1,45 @@
+Unique ID,Podio_Lead_Unique_id__c
+Business Name,Company
+Customer Contact - name,LastName
+Lead Source,Lead_Source__c
+Sales Channel,Sales_Channel__c
+Customer Contact - phone,Phone
+Customer Contact - mail,Email
+Was this an OTF,Was_this_an_OTF__c
+Old Website URL,Website
+Segment,Segment_text__c
+Lead Status,Lead_Stage__c
+Time Zone,Time_Zone__c
+What problem are we solving,What_Problem_are_we_solving__c
+Guide Point,Guide_Point__c
+Lead Owner - mail,Lead_Owner_Email__c
+New Address (Field) - Address,Address
+New Address (Field) - Postal Code,PostalCode
+New Address (Field) - City,City
+New Address (Field) - State,State
+New Address (Field) - Country,Country
+Behaviour Score,Behaviour_Score__c
+Demographic Score,Demographic_Score__c
+Employee Size,NumberOfEmployees
+Revenue SIze - amount,Revenue_Size__c
+Year founded,Year_founded__c
+Year founded link,Year_founded_link__c
+Facebook,Facebook__c
+Yelp / Linkedin / Other,Yelp_Linkedin_Other__c
+Source,Source__c
+VMs,VMs__c
+VMs Call Back,VMs_Call_Back__c
+DMs,DMs__c
+Value Prop,Value_Prop__c
+Demo Set Date in Prospects time,Demo_Set_Date_in_Prospects_time__c
+Last Comment Date & Time,Last_Dial_Attempt_DateTime__c
+Related Pipeline: Task Date & Time,Task_Reminder_Date_Time__c
+Revenue Size - amount,Revenue_Size__c
+Was this a OTF,Was_this_an_OTF__c
+Yelp / Linkedin / Others,Yelp_Linkedin_Other__c
+Demo Set Date in Prospects time,Demo_Set_Date_in_Prospects_time__c
+Revenue Size - amount,Revenue_Size__c
+Was this a OTF,Was_this_an_OTF__c
+Yelp / Linkedin / Others,Yelp_Linkedin_Other__c
+Demo Set Date in Prospects time - start,Demo_Set_Date_in_Prospects_time__c
+Salesforce Lead id,Id

@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+  <head>
+    <title>File Upload and Salesforce Query Example</title>
+  </head>
+  <body>
+    <h1>File Upload and Salesforce Query Example</h1>
+
+    <h2>Salesforce Query Result:</h2>
+    <p>{{ Result }}</p>
+
+    {% if table %}
+    <h2>Uploaded File Table:</h2>
+    {{ table|safe }}
+    {% endif %}
+
+    <h2>Upload a File:</h2>
+    <form method="post" enctype="multipart/form-data" action="{{ url_for('upload') }}">
+      <input type="file" name="file">
+      <input type="submit" value="Upload">
+    </form>
+
+    <h2>Query Salesforce:</h2>
+    <form method="post" action="{{ url_for('query_salesforce') }}">
+      <input type="submit" value="Query Salesforce">
+    </form>
+  </body>
+</html>
+
