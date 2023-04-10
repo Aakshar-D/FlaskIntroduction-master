@@ -9,7 +9,6 @@ from simple_salesforce import Salesforce
 from simple_salesforce.login import SalesforceLogin
 import os
 import openpyxl
-import csv_templates
 import subprocess
 from werkzeug.utils import secure_filename
 
