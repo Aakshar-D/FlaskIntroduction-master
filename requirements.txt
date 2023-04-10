@@ -14,8 +14,6 @@ openpyxl==3.0.5
 phonenumbers==8.12.24
 simple-salesforce==1.11.0
 datetime==4.3
-os==0.1.0
 werkzeug.utils==0.16.0
-encodings==0.1.0
 salesforce_bulk==1.0.0
 requests==2.25.1

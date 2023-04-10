@@ -5,11 +5,6 @@ import openpyxl
 from datetime import datetime
 from simple_salesforce import Salesforce
 from simple_salesforce import SalesforceLogin
-from simple_salesforce import SFBulkHandler
-from salesforce_bulk import SalesforceBulk
-from salesforce_bulk.util import IteratorBytesIO
-from simple_salesforce import SFType
-import csv
 import os
 import phonenumbers
 import requests

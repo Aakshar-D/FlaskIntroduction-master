@@ -2,13 +2,10 @@
 A app to upload a csv file and query Salesforce for matching records.
 '''
 from flask import Flask, render_template, request, send_from_directory
-from flask_uploads import UploadSet, configure_uploads, DATA
+from flask_uploads import UploadSet, configure_uploads
 from flask_sqlalchemy import SQLAlchemy
 import pandas as pd
-from simple_salesforce import Salesforce
-from simple_salesforce.login import SalesforceLogin
 import os
-import openpyxl
 import subprocess
 from werkzeug.utils import secure_filename
 
