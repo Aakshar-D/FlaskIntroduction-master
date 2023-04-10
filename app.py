@@ -1,7 +1,7 @@
 ''''
 A app to upload a csv file and query Salesforce for matching records.
 '''
-from flask import Flask, render_template, request, send_file, send_from_directory
+from flask import Flask, render_template, request, send_from_directory
 from flask_uploads import UploadSet, configure_uploads, DATA
 from flask_sqlalchemy import SQLAlchemy
 import pandas as pd
