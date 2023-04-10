@@ -21,7 +21,7 @@ configure_uploads(app, files)
 
 @app.route('/')
 def index():
-    return render_template('home.html')
+    return render_template('Home.html')
 
 @app.route('/upload', methods=['POST'])
 def upload():
@@ -36,13 +36,13 @@ def upload():
         elif extension in ['.xls', '.xlsx']:
             df = pd.read_excel(file)
         else:
-            return render_template('home.html', error='Unsupported file format. Please upload a CSV or Excel file.')
+            return render_template('Home.html', error='Unsupported file format. Please upload a CSV or Excel file.')
 
         df.to_csv('csv_templates\data.csv', index=False)
         subprocess.call('python Demo_sych.py', shell=False)
 
         return render_template('home.html', success='File uploaded successfully.')
-    return render_template('home.html')
+    return render_template('Home.html')
 
 @app.route('/Insert_file', methods=['GET', 'POST'])
 def Insert_file():
@@ -50,7 +50,7 @@ def Insert_file():
     filename = 'Insert.csv'
     if request.method == 'POST':
         return send_from_directory(directory, filename, as_attachment=True)
-    return render_template('home.html')
+    return render_template('Home.html')
 
 @app.route('/Update_file', methods=['GET', 'POST'])
 def Update_file():
@@ -58,7 +58,7 @@ def Update_file():
     filename = 'Update.csv'
     if request.method == 'POST':
         return send_from_directory(directory, filename, as_attachment=True)
-    return render_template('home.html')
+    return render_template('Home.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
