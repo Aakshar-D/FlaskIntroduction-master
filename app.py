@@ -43,7 +43,7 @@ def upload():
         subprocess.call(['python3','Demo_sych.py'], shell=True)
         subprocess.Popen(['python3', 'Demo_sych.py'], bufsize=0)
 
-        return render_template('home.html', success='File uploaded successfully.')
+        return render_template('Home.html', success='File uploaded successfully.')
     return render_template('Home.html')
 
 @app.route('/Insert_file', methods=['GET', 'POST'])
