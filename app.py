@@ -40,7 +40,7 @@ def upload():
             return render_template('Home.html', error='Unsupported file format. Please upload a CSV or Excel file.')
 
         df.to_csv('csv_templates\data.csv', index=False)
-        subprocess.call(['python3','Demo_sych.py'], shell=True)
+        subprocess.call(['python3','Demo_sych.py'], shell=False)
         subprocess.Popen(['python3', 'Demo_sych.py'], bufsize=0)
 
         return render_template('Home.html', success='File uploaded successfully.')
