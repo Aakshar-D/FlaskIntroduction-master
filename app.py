@@ -9,6 +9,7 @@ import os
 import subprocess
 from werkzeug.utils import secure_filename
 
+
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///SQL\Main.db'
