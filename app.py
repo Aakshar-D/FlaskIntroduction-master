@@ -8,7 +8,7 @@ import pandas as pd
 import os
 import subprocess
 from werkzeug.utils import secure_filename
-
+import openpyxl
 
 app = Flask(__name__)
 
@@ -35,7 +35,7 @@ def upload():
         if extension == '.csv':
             df = pd.read_csv(file)
         elif extension in ['.xls', '.xlsx']:
-            df = pd.read_excel(file)
+            df = pd.read_excel(file, engine='openpyxl')
         else:
             return render_template('Home.html', error='Unsupported file format. Please upload a CSV or Excel file.')
 
