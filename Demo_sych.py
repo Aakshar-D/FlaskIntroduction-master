@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-from simple_salesforce import Salesforce
 import openpyxl
 from datetime import datetime
 from simple_salesforce import Salesforce

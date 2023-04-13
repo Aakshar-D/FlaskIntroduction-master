@@ -62,6 +62,49 @@ def Update_file():
         return send_from_directory(directory, filename, as_attachment=True)
     return render_template('Home.html')
 
+@app.route('/Data_loader', methods=['GET', 'POST'])
+def Data_loader():
+    return render_template('Data_loader.html')
+
+@app.route('/upload_data', methods=['POST'])
+def upload_data():
+    if request.method == 'POST' and 'file' in request.files:
+        # Load uploaded file into Pandas DataFrame
+        file = request.files['file']
+        filename = secure_filename(file.filename)
+        extension = os.path.splitext(filename)[1]
+
+        if extension == '.csv':
+            df = pd.read_csv(file)
+        elif extension in ['.xls', '.xlsx']:
+            df = pd.read_excel(file, engine='openpyxl')
+        else:
+            return render_template('Data_loader.html', error='Unsupported file format. Please upload a CSV or Excel file.')
+
+        df.to_csv("csv_templates\Insert_data.csv", index=False)
+        subprocess.call(['python','Bulk_import.py'], shell=False)
+        subprocess.Popen(['python', 'Bulk_import.py'], bufsize=0)
+
+        return render_template('Data_loader.html', success='File uploaded successfully.')
+    return render_template('Data_loader.html')
+
+@app.route('/Sucess_File', methods=['GET', 'POST'])
+def Sucess_File():
+    directory = 'Results'
+    filename = 'Sucess.csv'
+    if request.method == 'POST':
+        return send_from_directory(directory, filename, as_attachment=True)
+    return render_template('Data_loader.html')
+
+@app.route('/Erorr_File', methods=['GET', 'POST'])
+def Erorr_File():
+    directory = 'Results'
+    filename = 'Error.csv'
+    if request.method == 'POST':
+        return send_from_directory(directory, filename, as_attachment=True)
+    return render_template('Data_loader.html')
+
+
 if __name__ == '__main__':
     app.run(debug=True)
 

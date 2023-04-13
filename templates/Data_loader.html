@@ -6,7 +6,7 @@
   </head>
   <body>
     <header>
-      <h1>Webforce</h1>
+      <h1>Webforce Data Loader</h1>
     </header>
     {% if table %}
       <section>
@@ -16,31 +16,25 @@
     {% endif %}
     <section>
       <h2>Upload a File</h2>
-      <form method="post" enctype="multipart/form-data" action="{{ url_for('upload') }}">
+      <form method="post" enctype="multipart/form-data" action="{{ url_for('upload_data') }}">
         <label for="file">Choose a file:</label>
         <input type="file" name="file" id="file">
-        <input type="submit" value="Upload">
+        <input type="submit" value="Insert">
       </form>
     </section>
     <section>
       <h2>Data Management</h2>
       <ul>
         <li>
-          <h3>Insert Data</h3>
-          <form  method="POST" action="{{ url_for('Insert_file') }}">
+          <h3>Sucess File</h3>
+          <form  method="POST" action="{{ url_for('Sucess_File') }}">
             <button type="submit" class="btn btn-primary">Download Output CSV File</button>
           </form>
         </li>
         <li>
-          <h3>Update Data</h3>
-          <form method="POST" action="{{ url_for('Update_file') }}" >
+          <h3>Erorr File</h3>
+          <form method="POST" action="{{ url_for('Erorr_File') }}" >
             <button type="submit" class="btn btn-primary">Download Output CSV File</button>
-          </form>
-        </li>
-        <li>
-          <h3>Data Loader</h3>
-          <form method="POST" action="{{ url_for('Data_loader') }}" >
-            <button type="submit" class="btn btn-primary">Go</button>
           </form>
         </li>
       </ul>
