@@ -19,16 +19,6 @@ bulk = SalesforceBulk(username='md.rabbani@webware.io.akshar',
                       security_token='jml4wjkxAt1O17v5pNBwRlWQ',
                       sandbox=True)
 
-# CSV file settings
-csv_filename = CSV_path
-csv_delimiter = ','
-
-# Open CSV file and read headers to dynamically set fieldnames list
-with open(csv_filename, 'r') as csv_file:
-    csv_reader = csv.reader(csv_file, delimiter=csv_delimiter)
-    headers = next(csv_reader)
-    fieldnames_r = [header.replace(' ', '_') for header in headers if header.strip()]
-
 
 # Authenticate with Salesforce and create a bulk job
 job = bulk.create_insert_job(object_name='Lead', contentType='CSV')
