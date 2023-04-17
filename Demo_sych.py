@@ -8,6 +8,12 @@ import os
 import phonenumbers
 import requests
 import encodings
+import concurrent.futures
+
+Ac_phone, Ac_email = {}, {}
+L_phone, L_email = {}, {}
+op_email, op_phone, op_ac = {}, {}, {}
+d, y = {}, {}
 
 session_id, instance = SalesforceLogin(
                                         username='akshar.dharwadkar@webware.io',
@@ -28,38 +34,77 @@ def format_phone_number(phone_number):
     except phonenumbers.phonenumberutil.NumberParseException:
         return phone_number
 
-query_result = Sf.query_all("Select Phone,Email,PODIO_LEAD_UNIQUE_ID__C,Id,IsDeleted FROM Lead ")
-dfq = pd.DataFrame(query_result['records'])
-dfq.drop(dfq[dfq['IsDeleted'] == True ].index, axis=0, inplace=True)
-dfq.drop(columns=['attributes','IsDeleted'],inplace=True)
-dfq.loc[:,'Phone'] = dfq['Phone'].apply(lambda x: format_phone_number(str(x)))
-Lead_phone = dfq[['Phone','Id']]
-Lead_email = dfq[['Email','Id']]
 
-query_result_acc = Sf.query_all("Select Phone,Email__c,Podio_Lead_Unique_id__c,Id,IsDeleted FROM Account")
-df2 = pd.DataFrame(query_result_acc['records'])
-df2.drop(df2[df2['IsDeleted'] == True ].index, axis=0, inplace=True)
-df2.drop(columns=['attributes','IsDeleted'],inplace=True)
-df2.loc[:,'Phone'] = df2['Phone'].apply(lambda x: format_phone_number(str(x)))
-Acc_Phone = df2[['Phone','Id']]
-Acc_Email = df2[['Email__c','Id']]
+def import_leads():
+    global L_phone, L_email
+    query_result = Sf.query_all("Select Phone,Email,PODIO_LEAD_UNIQUE_ID__C,Id,IsDeleted FROM Lead ")
+    dfq = pd.DataFrame(query_result['records'])
+    dfq.drop(dfq[dfq['IsDeleted'] == True ].index, axis=0, inplace=True)
+    dfq.drop(columns=['attributes','IsDeleted'],inplace=True)
+    Lead_phone = dfq[['Phone','Id']]
+    Lead_email = dfq[['Email','Id']]
+    Lead_phone.loc[:, 'Phone'] = Lead_phone['Phone'].apply(lambda x: format_phone_number(str(x)))
+    L_p = dict(zip(Lead_phone['Phone'].tolist(), Lead_phone['Id'].tolist()))
+    L_e = dict(zip(Lead_email['Email'].tolist(), Lead_email['Id'].tolist()))
+    L_phone.update(L_p)
+    L_email.update(L_e)
 
-oppac_quarry = Sf.query_all("Select Phone__c,Email__c,AccountId,IsDeleted,Id FROM Opportunity")
-oppac  = pd.DataFrame(oppac_quarry ['records'])
-oppac.drop(oppac[oppac['IsDeleted'] == True ].index, axis=0, inplace=True)
-oppac.drop(columns=['attributes','IsDeleted'],inplace=True)
-oppac.loc[:, 'Phone__c'] = oppac['Phone__c'].apply(lambda x: format_phone_number(str(x)))
-opp_phone = oppac[['Phone__c','Id']]
-opp_email = oppac[['Email__c','Id']]
-opp_acc = oppac[['AccountId','Id']]
 
-Segments = Sf.query("Select Name, Salesforce_Segment_Id__c  FROM Segment__c ")
-DFseg = pd.DataFrame(Segments['records'])
-DFseg.drop(columns='attributes',inplace=True)
+def import_Account():
+    global Ac_phone, Ac_email
+    query_result_acc = Sf.query_all("Select Phone,Email__c,Podio_Lead_Unique_id__c,Id,IsDeleted FROM Account")
+    df2 = pd.DataFrame(query_result_acc['records'])
+    df2.drop(df2[df2['IsDeleted'] == True ].index, axis=0, inplace=True)
+    df2.drop(columns=['attributes','IsDeleted'],inplace=True)
+    Acc_Phone = df2[['Phone','Id']]
+    Acc_Phone.loc[:, 'Phone'] = Acc_Phone['Phone'].apply(lambda x: format_phone_number(str(x)))
+    Acc_Email = df2[['Email__c','Id']]
+    Ac_p = dict(zip(Acc_Phone['Phone'].tolist(), Acc_Phone['Id'].tolist()))
+    Ac_e = dict(zip(Acc_Email['Email__c'].tolist(), Acc_Email['Id'].tolist()))
+    Ac_phone.update(Ac_p)
+    Ac_email.update(Ac_e)
 
-User = Sf.query("Select Email, Id FROM User ")
-Userdf = pd.DataFrame(User['records'])
-Userdf.drop(columns='attributes',inplace=True)
+def import_opp():
+    global op_phone, op_email, op_acc
+    oppac_quarry = Sf.query_all("Select Phone__c,Email__c,AccountId,IsDeleted,Id FROM Opportunity")
+    oppac  = pd.DataFrame(oppac_quarry ['records'])
+    oppac.drop(oppac[oppac['IsDeleted'] == True ].index, axis=0, inplace=True)
+    oppac.drop(columns=['attributes','IsDeleted'],inplace=True)
+    opp_phone = oppac[['Phone__c','Id']]
+    opp_phone.iloc[:, 'Phone__c'] = opp_phone['Phone__c'].apply(lambda x: format_phone_number(str(x)))
+    opp_email = oppac[['Email__c','Id']]
+    opp_acc = oppac[['AccountId','Id']]
+    Op_p = dict(zip(opp_phone['Phone__c'].tolist(), opp_phone['Id'].tolist()))
+    Op_e = dict(zip(opp_email['Email__c'].tolist(), opp_email['Id'].tolist()))
+    Op_A = dict(zip(opp_acc['AccountId'].tolist(), opp_acc['Id'].tolist()))
+    op_phone.update(Op_p)
+    op_email.update(Op_e)
+    op_ac.update(Op_A)
+
+def import_Segments():
+    global d
+    Segments = Sf.query("Select Name, Salesforce_Segment_Id__c  FROM Segment__c ")
+    DFseg = pd.DataFrame(Segments['records'])
+    DFseg.drop(columns='attributes',inplace=True)
+    s = dict(zip(DFseg['Name'].tolist(), DFseg['Salesforce_Segment_Id__c'].tolist()))
+    d.update(s)
+
+def import_User():
+    global y
+    User = Sf.query("Select Email, Id FROM User ")
+    Userdf = pd.DataFrame(User['records'])
+    Userdf.drop(columns='attributes',inplace=True)
+    U = dict(zip(Userdf['Email'].tolist(), Userdf['Id'].tolist()))
+    y.update(U)
+
+with concurrent.futures.ThreadPoolExecutor() as executor:
+    future1 = executor.submit(import_leads)
+    future2 = executor.submit(import_Account)
+    future3 = executor.submit(import_Segments)
+    future4 = executor.submit(import_User)
+
+# Wait for both functions to complete
+concurrent.futures.wait([future1, future2,future3,future4])
 
 Lead_stage_map = "csv_templates\Lead status.csv"
 
@@ -70,24 +115,14 @@ Priority = "csv_templates\\Priority .csv"
 
 df_Colunm = pd.read_csv(Colunm_map, header=None, index_col=0, squeeze = True)
 df_Priority = pd.read_csv(Priority, header=None, index_col=0, squeeze = True)
-
 df_Lead_stage = pd.read_csv(Lead_stage_map, header=None, index_col=0, squeeze = True)
 
-d = dict(zip(DFseg['Name'].tolist(), DFseg['Salesforce_Segment_Id__c'].tolist()))
-y = dict(zip(Userdf['Email'].tolist(), Userdf['Id'].tolist()))
 c = df_Colunm.to_dict()
 P = df_Priority.to_dict()
 a = df_Lead_stage.to_dict()
-L_phone = dict(zip(Lead_phone['Phone'].tolist(), Lead_phone['Id'].tolist()))
-L_email = dict(zip(Lead_email['Email'].tolist(), Lead_email['Id'].tolist()))
-Ac_phone = dict(zip(Acc_Phone['Phone'].tolist(), Acc_Phone['Id'].tolist()))
-Ac_email = dict(zip(Acc_Email['Email__c'].tolist(), Acc_Email['Id'].tolist()))
-Op_phone = dict(zip(opp_phone['Phone__c'].tolist(), opp_phone['Id'].tolist()))
-Op_email = dict(zip(opp_email['Email__c'].tolist(), opp_email['Id'].tolist()))
-Op_Ac = dict(zip(opp_acc['AccountId'].tolist(), opp_acc['Id'].tolist()))
+
 z = list(c.keys())
 d.update({'Film Production/Rental companies': 'a055e0000012i6cAAA'})
-
 
 
 df_data = pd.read_csv('csv_templates\data.csv')
@@ -146,10 +181,10 @@ df_rq['Ac_Id_phone']= df_rq['Phone'].map(Ac_phone)
 df_rq['AcIId_email']= df_rq['Email'].map(Ac_email)
 df_rq['L_Id_phone']= df_rq['Phone'].map(L_phone)
 df_rq['L_Id_email']= df_rq['Email'].map(L_email)
-df_rq['Op_Id_phone']= df_rq['Phone'].map(Op_phone)
-df_rq['Op_Id_email']= df_rq['Email'].map(Op_email)
-df_rq['Op_Id_email_ac'] = df_rq['AcIId_email'].map(Op_Ac)
-df_rq['Op_Id_phone_ac'] = df_rq['Ac_Id_phone'].map(Op_Ac)
+df_rq['Op_Id_phone']= df_rq['Phone'].map(op_phone)
+df_rq['Op_Id_email']= df_rq['Email'].map(op_email)
+df_rq['Op_Id_email_ac'] = df_rq['AcIId_email'].map(op_ac)
+df_rq['Op_Id_phone_ac'] = df_rq['Ac_Id_phone'].map(op_ac)
 
 
 Update_df = df_rq.loc[~((df_rq['Ac_Id_phone'].isnull()) & (df_rq['AcIId_email'].isnull() & df_rq['L_Id_phone'].isnull()) & (df_rq['L_Id_email'].isnull() & df_rq['Op_Id_phone'].isnull()) & (df_rq['Op_Id_email'].isnull()))]
