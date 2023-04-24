@@ -176,6 +176,8 @@ df_rq['Segment__c'] = df_rq['Segment_text__c'].map(d)
 df_rq['OwnerId'] = df_rq['Lead_Owner_Email__c'].map(y)
 df_rq['Priority__c'] = df_rq['Sales_Channel__c'].map(P)
 df_rq['Status'] = df_rq['Lead_Stage__c'].map(a)
+df_rq['OwnerId'] = df_rq['OwnerId'].fillna('00GI9000000MBzwMAG')
+df_rq.loc[(df_rq["Lead_Stage__c"] == "Open") & (df_rq["OwnerId"] == "00GI9000000MBzwMAG") , "LEAD_MATRIX_STATUS__c"] = 'CAN BE ASSIGNED'
 
 df_rq['Ac_Id_phone']= df_rq['Phone'].map(Ac_phone)
 df_rq['AcIId_email']= df_rq['Email'].map(Ac_email)
