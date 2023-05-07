@@ -24,6 +24,25 @@ configure_uploads(app, files)
 def index():
     return render_template('Home.html')
 
+@app.route('/upload_tempalet', methods=['POST'])
+def upload_tempalet():
+    if request.method == 'POST' and 'file' in request.files:
+        # Load uploaded file into Pandas DataFrame
+        file = request.files['file']
+        filename = secure_filename(file.filename)
+        extension = os.path.splitext(filename)[1]
+
+        if extension == '.csv':
+            df = pd.read_csv(file)
+        elif extension in ['.xls', '.xlsx']:
+            df = pd.read_excel(file, engine='openpyxl')
+        else:
+            return render_template('Home.html', error='Unsupported file format. Please upload a CSV or Excel file.')
+        df.to_csv('csv_templates\\Column_map - AE.csv', index=False)
+        return render_template('home.html', success='File uploaded successfully.')
+    return render_template('Home.html')
+
+
 @app.route('/upload', methods=['POST'])
 def upload():
     if request.method == 'POST' and 'file' in request.files:
