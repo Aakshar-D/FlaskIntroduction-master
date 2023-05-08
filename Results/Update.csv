@@ -1,1 +1,7 @@
 Podio_Lead_Unique_id__c,Company,LastName,Lead_Source__c,Sales_Channel__c,Phone,Email,Website,Segment_text__c,Lead_Stage__c,Time_Zone__c,What_Problem_are_we_solving__c,Guide_Point__c,Lead_Owner_Email__c,Address,PostalCode,City,State,Country,Behaviour_Score__c,Demographic_Score__c,NumberOfEmployees,Year_founded__c,Year_founded_link__c,Facebook__c,Source__c,Last_Dial_Attempt_DateTime__c,Revenue_Size__c,Demo_Set_Date_in_Prospects_time__c,Id,Additional_Customer_Info_Important_Inf__c,Country__c,Segment__c,OwnerId,Priority__c,Status,LEAD_MATRIX_STATUS__c,Ac_Id_phone,AcIId_email,L_Id_phone,L_Id_email,Op_Id_phone,Op_Id_email,Op_Id_email_ac,Op_Id_phone_ac
+CANLead384032,Omicron,Bill Tucker,Cold Pro,Webware Pro,(604) 632-3350,vancouver@omicronaec.com,https://omicronaec.com/,Architects,Open,PST,,,,"595 Burrard Street Three Bentall Centre, Fifth Floor",V7X 1L4,Vancouver,British Columbia,Canada,,,200.0,1998.0,,,google.com,,50000000.0,,,"(877) 632-3350
+
+;
+
+[victoria@omicronaec.com](mailto:victoria@omicronaec.com)",CANADA,a055e0000012i6UAAQ,00GI9000000MBzwMAG,3,Open Lead,CAN BE ASSIGNED,,,,00QI9000001icbnMAA,,,,
+CANLead384013,Infinity Law,Nav Parhar,Cold Pro,Webware Pro,(250) 385-6004,,http://www.infinity-law.com/,Lawyers,Open,PST,,,,200 931 Fort St,V8V 3K3,Victoria,British Columbia,Canada,,,25.0,2013.0,,https://www.facebook.com/Infinitylaw/,google.com,,5000000.0,,,,CANADA,a055e0000012i6sAAA,00GI9000000MBzwMAG,3,Open Lead,CAN BE ASSIGNED,,,00QI9000001oGKoMAM,,,,,

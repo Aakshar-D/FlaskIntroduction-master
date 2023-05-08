@@ -112,6 +112,7 @@ def upload_data():
         return render_template('Data_loader.html', success='File uploaded successfully.')
     return render_template('Data_loader.html')
 
+
 @app.route('/Sucess_File', methods=['GET', 'POST'])
 def Sucess_File():
     directory = 'Results'
@@ -119,7 +120,6 @@ def Sucess_File():
     if request.method == 'POST':
         return send_from_directory(directory, filename, as_attachment=True)
     return render_template('Data_loader.html')
-
 @app.route('/Erorr_File', methods=['GET', 'POST'])
 def Erorr_File():
     directory = 'Results'
