@@ -59,13 +59,13 @@ def upload():
             return render_template('Home.html', error='Unsupported file format. Please upload a CSV or Excel file.')
 
         df.to_csv('csv_templates\data.csv', index=False)
-<<<<<<< HEAD
+
         subprocess.call(['python','Demo_sych.py'], shell=False)
         subprocess.Popen(['python', 'Demo_sych.py'], bufsize=0)
-=======
+
         subprocess.call(['python3','Demo_sych.py'], shell=False)
         subprocess.Popen(['python3', 'Demo_sych.py'], bufsize=0)
->>>>>>> 139fdfdea3ae77d4d984ab94f3f2a93d4e6b7100
+
 
         return render_template('Home.html', success='File uploaded successfully.')
     return render_template('Home.html')
