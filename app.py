@@ -9,16 +9,36 @@ import os
 import subprocess
 from werkzeug.utils import secure_filename
 import openpyxl
+import sqlite3
 
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///SQL\Main.db'
 db = SQLAlchemy(app)
 
-# Configure file uploads
-files = UploadSet('files', extensions=('csv', 'xls', 'xlsx'))
-app.config['UPLOADED_FILES_DEST'] = 'uploads'
-configure_uploads(app, files)
+def update_dataframe_to_sqlite(df, db_file, table_name):
+    # Connect to the SQLite database
+    conn = sqlite3.connect(db_file)
+
+    # Check if the table already exists
+    cursor = conn.cursor()
+    cursor.execute(f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}'")
+    table_exists = cursor.fetchone()
+
+    if not table_exists:
+        # Create the table if it doesn't exist
+        columns = [f"`{col}`" for col in df.columns]  # Sanitize column names
+        create_table_query = f"CREATE TABLE {table_name} ({', '.join(columns)})"
+        cursor.execute(create_table_query)
+
+    # Insert the data into the table
+    df.to_sql(table_name, conn, if_exists='replace', index=False)
+
+    # Close the connection
+    conn.close()
+
+
+
 
 @app.route('/')
 def index():
@@ -38,7 +58,14 @@ def upload_tempalet():
             df = pd.read_excel(file, engine='openpyxl')
         else:
             return render_template('Home.html', error='Unsupported file format. Please upload a CSV or Excel file.')
-        df.to_csv('csv_templates\\Column_map - AE.csv', index=False)
+
+        # Specify the SQLite database file path and the table name
+        db_file = 'SQL\Main.db'
+        table_name = 'Tempalet'
+
+        # Update the DataFrame to the SQLite database
+        update_dataframe_to_sqlite(df, db_file, table_name)
+
         return render_template('home.html', success='File uploaded successfully.')
     return render_template('Home.html')
 
@@ -58,7 +85,14 @@ def upload():
         else:
             return render_template('Home.html', error='Unsupported file format. Please upload a CSV or Excel file.')
 
-        df.to_csv('csv_templates\data.csv', index=False)
+        df2 = df.loc[:, ~df.columns.duplicated()]
+        # Specify the SQLite database file path and the table name
+        db_file = 'SQL\Main.db'
+        table_name = 'Upload_data'
+
+        # Update the DataFrame to the SQLite database
+        update_dataframe_to_sqlite(df2, db_file, table_name)
+
 
         subprocess.call(['python','Demo_sych.py'], shell=False)
         subprocess.Popen(['python', 'Demo_sych.py'], bufsize=0)

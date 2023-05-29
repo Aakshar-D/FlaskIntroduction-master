@@ -9,6 +9,7 @@ import phonenumbers
 import requests
 import encodings
 import concurrent.futures
+import sqlite3
 
 Ac_phone, Ac_email = {}, {}
 L_phone, L_email = {}, {}
@@ -34,6 +35,44 @@ def format_phone_number(phone_number):
     except phonenumbers.phonenumberutil.NumberParseException:
         return phone_number
 
+def update_dataframe_to_sqlite(df, db_file, table_name):
+    # Connect to the SQLite database
+    conn = sqlite3.connect(db_file)
+
+    # Check if the table already exists
+    cursor = conn.cursor()
+    cursor.execute(f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}'")
+    table_exists = cursor.fetchone()
+
+    if not table_exists:
+        # Create the table if it doesn't exist
+        columns = [f"`{col}`" for col in df.columns]  # Sanitize column names
+        create_table_query = f"CREATE TABLE {table_name} ({', '.join(columns)})"
+        cursor.execute(create_table_query)
+
+    # Insert the data into the table
+    df.to_sql(table_name, conn, if_exists='replace', index=False)
+
+    # Close the connection
+    conn.close()
+
+def query_data_from_sqlite(db_file, query):
+    # Connect to the SQLite database
+    conn = sqlite3.connect(db_file)
+    # Create a cursor object to execute SQL queries
+    cursor = conn.cursor()
+    # Execute the query
+    cursor.execute(query)
+    # Fetch all the results
+    results = cursor.fetchall()
+    # Get the column names from the cursor description
+    column_names = [desc[0] for desc in cursor.description]
+    # Create a DataFrame from the results and column names
+    df = pd.DataFrame(results, columns=column_names)
+    # Close the connection
+    conn.close()
+    # Return the DataFrame
+    return df
 
 def import_leads():
     global L_phone, L_email
@@ -125,7 +164,8 @@ z = list(c.keys())
 d.update({'Film Production/Rental companies': 'a055e0000012i6cAAA'})
 
 
-df_data = pd.read_csv('csv_templates\data.csv')
+
+df_data = query_data_from_sqlite('SQL\Main.db', 'SELECT * FROM Upload_data')
 df_data
 df_rq = df_data.filter(z)
 df_rq
@@ -193,6 +233,9 @@ Update_df = df_rq.loc[~((df_rq['Ac_Id_phone'].isnull()) & (df_rq['AcIId_email'].
 insert_df = df_rq.loc[((df_rq['Ac_Id_phone'].isnull()) & (df_rq['AcIId_email'].isnull() & df_rq['L_Id_phone'].isnull()) & (df_rq['L_Id_email'].isnull() & df_rq['Op_Id_phone'].isnull()) & (df_rq['Op_Id_email'].isnull()) & (df_rq['Op_Id_email_ac'].isnull()) & (df_rq['Op_Id_phone_ac'].isnull()))]
 insert_df.drop(columns=['Ac_Id_phone', 'AcIId_email', 'L_Id_phone', 'L_Id_email', 'Op_Id_phone', 'Op_Id_email','Op_Id_phone_ac','Op_Id_email_ac'],inplace=True)
 
+update_dataframe_to_sqlite(Update_df, 'SQL\Main.db', 'Update_data')
+update_dataframe_to_sqlite(insert_df, 'SQL\Main.db', 'insert_data')
 
-Update_df.to_csv("E:\\Salesforce_auto\\Data_migraition\\production\\FlaskIntroduction-master\\Results\\update.csv",index = False)
-insert_df.to_csv("E:\Salesforce_auto\Data_migraition\production\FlaskIntroduction-master\Results\Insert.csv",index = False)
+
+Update_df.to_csv("E:\\Salesforce_auto\\Data_migraition\production\\FlaskIntroduction-master\\Results\\Update.csv",index = False)
+insert_df.to_csv("E:\\Salesforce_auto\\Data_migraition\\production\\FlaskIntroduction-master\\Results\\Insert.csv",index = False)
