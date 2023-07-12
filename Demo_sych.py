@@ -13,7 +13,7 @@ import sqlite3
 
 Ac_phone, Ac_email = {}, {}
 L_phone, L_email = {}, {}
-op_email, op_phone, op_ac = {}, {}, {}
+op_email, op_phone, op_acc = {}, {}, {}
 d, y = {}, {}
 
 session_id, instance = SalesforceLogin(
@@ -110,7 +110,7 @@ def import_opp():
     oppac.drop(oppac[oppac['IsDeleted'] == True ].index, axis=0, inplace=True)
     oppac.drop(columns=['attributes','IsDeleted'],inplace=True)
     opp_phone = oppac[['Phone__c','Id']]
-    opp_phone.iloc[:, 'Phone__c'] = opp_phone['Phone__c'].apply(lambda x: format_phone_number(str(x)))
+    opp_phone.loc[:, 'Phone__c'] = opp_phone['Phone__c'].apply(lambda x: format_phone_number(str(x)))
     opp_email = oppac[['Email__c','Id']]
     opp_acc = oppac[['AccountId','Id']]
     Op_p = dict(zip(opp_phone['Phone__c'].tolist(), opp_phone['Id'].tolist()))
@@ -118,7 +118,8 @@ def import_opp():
     Op_A = dict(zip(opp_acc['AccountId'].tolist(), opp_acc['Id'].tolist()))
     op_phone.update(Op_p)
     op_email.update(Op_e)
-    op_ac.update(Op_A)
+    op_acc.update(Op_A)
+
 
 def import_Segments():
     global d
@@ -163,12 +164,9 @@ a = df_Lead_stage.to_dict()
 z = list(c.keys())
 d.update({'Film Production/Rental companies': 'a055e0000012i6cAAA'})
 
-
-
-df_data = query_data_from_sqlite('SQL\Main.db', 'SELECT * FROM Upload_data')
-df_data
+df_data = pd.read_csv("csv_templates\data.csv")
+df_data.fillna('NA', inplace=True)
 df_rq = df_data.filter(z)
-df_rq
 df_rq.rename(columns=c,inplace=True)
 
 try:
@@ -206,28 +204,33 @@ df_rq.loc[df_rq["Lead_Stage__c"] == "Attempt 1", "Lead_Stage__c"] = 'Attempted'
 df_rq.loc[df_rq["Lead_Stage__c"] == "Attempt 2", "Lead_Stage__c"] = 'Attempted'
 df_rq.loc[df_rq["Lead_Stage__c"] == "Attempt 3", "Lead_Stage__c"] = 'Attempted'
 df_rq.loc[df_rq["Time_Zone__c"] == "Others", "Time_Zone__c"] = 'Other'
-df_rq['Country__c'] = df_rq["Podio_Lead_Unique_id__c"].str[0:3]
-df_rq.loc[df_rq['Country__c']== 'USA','Country__c'] = 'USA'
-df_rq.loc[df_rq['Country__c']== 'CAN','Country__c'] = 'CANADA'
-df_rq.loc[(pd.isnull(df_rq['LastName'])), 'LastName'] = df_rq['Company']
-df_rq.drop(df_rq[df_rq['Lead_Stage__c'] == 'Duplicate Lead' ].index, axis=0, inplace=True)
+try:
+    df_rq['Country__c'] = df_rq["Podio_Lead_Unique_id__c"].str[0:3]
+    df_rq.loc[df_rq['Country__c']== 'USA','Country__c'] = 'USA'
+    df_rq.loc[df_rq['Country__c']== 'CAN','Country__c'] = 'CANADA'
+    df_rq.loc[(pd.isnull(df_rq['LastName'])), 'LastName'] = df_rq['Company']
+    df_rq.drop(df_rq[df_rq['Lead_Stage__c'] == 'Duplicate Lead' ].index, axis=0, inplace=True)
+except:
+    pass
 
-df_rq['Segment__c'] = df_rq['Segment_text__c'].map(d)
-df_rq['OwnerId'] = df_rq['Lead_Owner_Email__c'].map(y)
-df_rq['Priority__c'] = df_rq['Sales_Channel__c'].map(P)
-df_rq['Status'] = df_rq['Lead_Stage__c'].map(a)
-df_rq['OwnerId'] = df_rq['OwnerId'].fillna('00GI9000000MBzwMAG')
-df_rq.loc[(df_rq["Lead_Stage__c"] == "Open") & (df_rq["OwnerId"] == "00GI9000000MBzwMAG") , "LEAD_MATRIX_STATUS__c"] = 'CAN BE ASSIGNED'
-
+try:
+    df_rq['Segment__c'] = df_rq['Segment_text__c'].map(d)
+    df_rq['OwnerId'] = df_rq['Lead_Owner_Email__c'].map(y)
+    df_rq['Priority__c'] = df_rq['Sales_Channel__c'].map(P)
+    df_rq['Status'] = df_rq['Lead_Stage__c'].map(a)
+    df_rq['OwnerId'] = df_rq['OwnerId'].fillna('00GI9000000MBzwMAG')
+    df_rq.loc[(df_rq["Lead_Stage__c"] == "Open") & (df_rq["OwnerId"] == "00GI9000000MBzwMAG") , "LEAD_MATRIX_STATUS__c"] = 'CAN BE ASSIGNED'
+except:
+    pass
 df_rq['Ac_Id_phone']= df_rq['Phone'].map(Ac_phone)
 df_rq['AcIId_email']= df_rq['Email'].map(Ac_email)
 df_rq['L_Id_phone']= df_rq['Phone'].map(L_phone)
 df_rq['L_Id_email']= df_rq['Email'].map(L_email)
 df_rq['Op_Id_phone']= df_rq['Phone'].map(op_phone)
 df_rq['Op_Id_email']= df_rq['Email'].map(op_email)
-df_rq['Op_Id_email_ac'] = df_rq['AcIId_email'].map(op_ac)
-df_rq['Op_Id_phone_ac'] = df_rq['Ac_Id_phone'].map(op_ac)
-
+df_rq['Op_Id_email_ac'] = df_rq['AcIId_email'].map(op_acc)
+df_rq['Op_Id_phone_ac'] = df_rq['Ac_Id_phone'].map(op_acc)
+df_rq.replace('NA', pd.NA, inplace=True)
 
 Update_df = df_rq.loc[~((df_rq['Ac_Id_phone'].isnull()) & (df_rq['AcIId_email'].isnull() & df_rq['L_Id_phone'].isnull()) & (df_rq['L_Id_email'].isnull() & df_rq['Op_Id_phone'].isnull()) & (df_rq['Op_Id_email'].isnull()))]
 insert_df = df_rq.loc[((df_rq['Ac_Id_phone'].isnull()) & (df_rq['AcIId_email'].isnull() & df_rq['L_Id_phone'].isnull()) & (df_rq['L_Id_email'].isnull() & df_rq['Op_Id_phone'].isnull()) & (df_rq['Op_Id_email'].isnull()) & (df_rq['Op_Id_email_ac'].isnull()) & (df_rq['Op_Id_phone_ac'].isnull()))]
@@ -237,5 +240,5 @@ update_dataframe_to_sqlite(Update_df, 'SQL\Main.db', 'Update_data')
 update_dataframe_to_sqlite(insert_df, 'SQL\Main.db', 'insert_data')
 
 
-Update_df.to_csv("E:\\Salesforce_auto\\Data_migraition\production\\FlaskIntroduction-master\\Results\\Update.csv",index = False)
-insert_df.to_csv("E:\\Salesforce_auto\\Data_migraition\\production\\FlaskIntroduction-master\\Results\\Insert.csv",index = False)
+Update_df.to_csv("Results\\Update.csv",index = False)
+insert_df.to_csv("Results\\Insert.csv",index = False)

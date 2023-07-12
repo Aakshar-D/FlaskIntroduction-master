@@ -64,7 +64,7 @@ def upload_tempalet():
         table_name = 'Tempalet'
 
         # Update the DataFrame to the SQLite database
-        update_dataframe_to_sqlite(df, db_file, table_name)
+        df.to_csv("csv_templates\Column_map - AE.csv",index = False)
 
         return render_template('home.html', success='File uploaded successfully.')
     return render_template('Home.html')
@@ -91,8 +91,8 @@ def upload():
         table_name = 'Upload_data'
 
         # Update the DataFrame to the SQLite database
-        update_dataframe_to_sqlite(df2, db_file, table_name)
-
+        df.to_csv("csv_templates\data.csv",index = False)
+        
 
         subprocess.call(['python','Demo_sych.py'], shell=False)
         subprocess.Popen(['python', 'Demo_sych.py'], bufsize=0)
