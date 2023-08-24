@@ -1,1 +1,1 @@
-Podio_Lead_Unique_id__c,Company,LastName,Lead_Source__c,Sales_Channel__c,Phone,Email,Website,Segment_text__c,Lead_Stage__c,Time_Zone__c,PostalCode,City,State,Country,NumberOfEmployees,Year_founded__c,Year_founded_link__c,Facebook__c,Source__c,Revenue_Size__c,Additional_Customer_Info_Important_Inf__c,Country__c,Priority__c,Status,id,success,created,error
+Company,LastName,Lead_Source__c,Sales_Channel__c,Phone,Email,Segment_text__c,Lead_Stage__c,Time_Zone__c,Country__c,Segment__c,Priority__c,Status,id,success,created,error

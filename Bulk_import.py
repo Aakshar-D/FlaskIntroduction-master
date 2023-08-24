@@ -5,18 +5,19 @@ from io import StringIO
 import pandas as pd
 
 
-CSV_path = "csv_templates\\Insert_data.csv"
+#CSV_path = "csv_templates\\Insert_data.csv"
+CSV_path = "F:\\Work_files\\Inbound report Issue - Sample_leads.csv"
 
 df = pd.read_csv(CSV_path)
 df.fillna('', inplace=True)
-df.drop(columns=['Address'],inplace=True)
+#df.drop(columns=['Address'],inplace=True)
 upload_list = df.to_dict('records')
 
 
 # set up the bulk API connection
-bulk = SalesforceBulk(username='md.rabbani@webware.io.akshar',
+bulk = SalesforceBulk(username='md.rabbani@webware.io.lead',
                       password='Webware@1234',
-                      security_token='jml4wjkxAt1O17v5pNBwRlWQ',
+                      security_token='Et5QWCA6gBR5TV99RKsWCYlv',
                       sandbox=True)
 
 

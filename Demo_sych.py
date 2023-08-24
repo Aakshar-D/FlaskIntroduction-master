@@ -142,9 +142,10 @@ with concurrent.futures.ThreadPoolExecutor() as executor:
     future2 = executor.submit(import_Account)
     future3 = executor.submit(import_Segments)
     future4 = executor.submit(import_User)
+    future5 = executor.submit(import_opp)
 
 # Wait for both functions to complete
-concurrent.futures.wait([future1, future2,future3,future4])
+concurrent.futures.wait([future1, future2,future3,future4,future5])
 
 Lead_stage_map = "csv_templates\Lead status.csv"
 
