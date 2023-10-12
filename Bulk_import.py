@@ -6,7 +6,7 @@ import pandas as pd
 
 
 #CSV_path = "csv_templates\\Insert_data.csv"
-CSV_path = "F:\\Work_files\\Inbound report Issue - Sample_leads.csv"
+CSV_path = "F:\\Work_files\\Upload_08_25 - Sheet4 (1).csv"
 
 df = pd.read_csv(CSV_path)
 df.fillna('', inplace=True)
@@ -22,7 +22,7 @@ bulk = SalesforceBulk(username='md.rabbani@webware.io.lead',
 
 
 # Authenticate with Salesforce and create a bulk job
-job = bulk.create_insert_job(object_name='Lead', contentType='CSV')
+job = bulk.create_insert_job(object_name='Task', contentType='CSV')
 
 # Create CSV adapter and upload CSV data to Salesforce
 csv_adapter = CsvDictsAdapter(iter(upload_list))

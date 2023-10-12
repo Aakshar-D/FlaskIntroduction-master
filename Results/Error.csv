@@ -1,1 +1,1 @@
-Company,LastName,Lead_Source__c,Sales_Channel__c,Phone,Email,Segment_text__c,Lead_Stage__c,Time_Zone__c,Country__c,Segment__c,Priority__c,Status,id,success,created,error
+id,success,created,error
